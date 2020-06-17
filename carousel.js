@@ -5,23 +5,11 @@
 //when clicked on dots go to that specific slide
 
 const track = document.querySelector(".carousel_track");
-console.dir(track);
-
 const slides = Array.from(track.children);
-console.log(slides);
-
 const nextButton = document.querySelector(".carousel_button--right");
-console.dir(nextButton);
-
 const prevButton = document.querySelector(".carousel_button--left");
-console.dir(prevButton);
-
 const dotsNav = document.querySelector(".carousel_nav");
-console.dir(dotsNav);
-
 const dots = Array.from(dotsNav.children);
-
-
 //for each left/right click i need to move this much to left....
 const slideWidth = slides[0].getBoundingClientRect().width;
 
@@ -51,6 +39,22 @@ prevButton.addEventListener("click", (e) => {
   moveToTarget(currentSlide, prevSlide);
 });
 
+//enable the dots nav
+dotsNav.addEventListener("click", (e) => {
+    const targetDot = e.target.closest("button"); //dot that was clicked on
+    if (!targetDot) return;
+  
+    const currentDot = dotsNav.querySelector(".current-slide");
+    const currentSlide = track.querySelector(".current-slide");
+  
+    const targetIndex = dots.findIndex((dot) => dot == targetDot);
+    const targetSlide = slides[targetIndex];
+  
+    hideNavButton(targetIndex);
+    moveToTarget(currentSlide, targetSlide);
+  });
+  
+
 const moveToTarget = (currentSlide, targetSlide) => {
   track.style.transform = "translateX(-" + targetSlide.style.left + ")";
   
@@ -58,6 +62,7 @@ const moveToTarget = (currentSlide, targetSlide) => {
   targetSlide.classList.add("current-slide");
 
   const targetIndex = slides.findIndex((slide) => slide == targetSlide);
+  hideNavButton(targetIndex);
   updateDots(targetIndex);
 };
 
@@ -69,17 +74,12 @@ const updateDots = (targetIndex) => {
   targetDot.classList.add("current-slide");
 };
 
-//enable the dots nav
-
-dotsNav.addEventListener("click", (e) => {
-  const targetDot = e.target.closest("button"); //dot that was clicked on
-  if (!targetDot) return;
-
-  const currentDot = dotsNav.querySelector(".current-slide");
-  const currentSlide = track.querySelector(".current-slide");
-
-  const targetIndex = dots.findIndex((dot) => dot == targetDot);
-  const targetSlide = slides[targetIndex];
-
-  moveToTarget(currentSlide, targetSlide);
-});
+const hideNavButton=targetIndex=>{
+    if(targetIndex===0){
+        prevButton.classList.add('is-hidden');
+        nextButton.classList.remove('is-hidden');
+    }else if(targetIndex===slides.length-1){
+         prevButton.classList.remove('is-hidden');
+        nextButton.classList.add('is-hidden');
+    }
+}
